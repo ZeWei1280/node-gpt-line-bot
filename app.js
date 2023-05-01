@@ -44,37 +44,24 @@ async function handleEvent(event) {
         return Promise.resolve(null);
     }
 
-    // const completion = await openai.createChatCompletion({
-    //     model: "gpt-3.5-turbo",
-    //     messages: [{ 
-    //         role: 'user', // user input
-    //         content: event.message.text,
-    //     }, {
-    //         role: 'system', // gpt res input
-    //         content: 'null' 
-    //     }],
-    //     max_tokens: 500,
-    // });
-
-    // // create a echoing text message
-    // const echo = { 
-    //     type: 'text', 
-    //     text:  completion.data.choices.message.content.trim() || '抱歉，我沒有話可說了。'
-    // };
-    const { data } = await openai.createChatCompletion({
+    const completion = await openai.createChatCompletion({
         model: "gpt-3.5-turbo",
-        messages: [
-          {
-            role: 'user',
+        messages: [{ 
+            role: 'user', // user input
             content: event.message.text,
-          }
-        ],
+        }, {
+            role: 'system', // gpt res input
+            content: '好的，我一率用中文回答' 
+        }],
         max_tokens: 500,
-      });
-    
-      // create a echoing text message
-      const [choices] = data.choices;
-      const echo = { type: 'text', text: choices.message.content.trim() || '抱歉，我沒有話可說了。' };
+    });
+
+    // create a echoing text message
+    const echo = { 
+        type: 'text', 
+        text:  completion.data.choices[0].message.content.trim() || '抱歉，我沒有話可說了。'
+    };
+
     // use reply API
     return client.replyMessage(event.replyToken, echo);
 }
