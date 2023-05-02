@@ -45,7 +45,7 @@ async function handleEvent(event) {
         return Promise.resolve(null);
     }
 
-    const result = generateAiResponse(event.message.text);
+    const result = await generateAiResponse(event.message.text);
     // const completion = await openai.createChatCompletion({
     //     model: "gpt-3.5-turbo",
     //     messages: [{ 
@@ -67,6 +67,7 @@ async function handleEvent(event) {
     // use reply API
     return client.replyMessage(event.replyToken, echo);
 }
+
 
 // listen on port
 const port = process.env.PORT || 3000;
