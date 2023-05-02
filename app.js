@@ -1,15 +1,16 @@
 import express from 'express';
 import line from '@line/bot-sdk';
 import dotenv from 'dotenv';
-import { Configuration, OpenAIApi } from 'openai';
+import { generateAiResponse } from './ai.js';
+// import { Configuration, OpenAIApi } from 'openai';
 
 const envPath = "./config/.env";
 dotenv.config({path:envPath});
 
 // create ChatGPT config from env variables
-const gptConfig = new Configuration({
-    apiKey: process.env.OPENAI_API_KEY,
-});
+// const gptConfig = new Configuration({
+//     apiKey: process.env.OPENAI_API_KEY,
+// });
 
 
 // create LINE SDK config from env variables
@@ -21,7 +22,7 @@ const lineConfig = {
 // create LINE SDK client
 const client = new line.Client(lineConfig);
 // creat OpenAI
-const openai = new OpenAIApi(gptConfig);
+// const openai = new OpenAIApi(gptConfig);
 // create Express app
 const app = express();
 
@@ -44,22 +45,23 @@ async function handleEvent(event) {
         return Promise.resolve(null);
     }
 
-    const completion = await openai.createChatCompletion({
-        model: "gpt-3.5-turbo",
-        messages: [{ 
-            role: 'user', // user input
-            content: event.message.text,
-        }, {
-            role: 'system', // gpt res input
-            content: '好的，我一率用中文回答' 
-        }],
-        max_tokens: 500,
-    });
+    const result = generateAiResponse(event.message.text);
+    // const completion = await openai.createChatCompletion({
+    //     model: "gpt-3.5-turbo",
+    //     messages: [{ 
+    //         role: 'user', // user input
+    //         content: event.message.text,
+    //     }, {
+    //         role: 'system', // gpt res input
+    //         content: '好的，我一率用中文回答' 
+    //     }],
+    //     max_tokens: 500,
+    // });
 
     // create a echoing text message
     const echo = { 
         type: 'text', 
-        text:  completion.data.choices[0].message.content.trim() || '抱歉，我沒有話可說了。'
+        text:  result
     };
 
     // use reply API
