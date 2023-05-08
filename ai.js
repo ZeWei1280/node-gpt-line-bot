@@ -23,6 +23,14 @@ const generateAiResponse = async ( userMessage ) =>{
         return '重置對話紀錄'
     }
 
+    if(userMessage === '#繁體中文'){
+        addToHistory({
+            role: 'user',
+            content: '一律用繁體中文回答'
+        });
+        return '設置繁體中文'
+    }
+
     addToHistory({
         role: 'user',
         content: userMessage
@@ -35,6 +43,7 @@ const generateAiResponse = async ( userMessage ) =>{
     });
 
     const sysMessage = completion.data.choices[0].message.content.trim() || '抱歉，我沒有話可說了。'
+    
     addToHistory({
         role: 'system',
         content: sysMessage
